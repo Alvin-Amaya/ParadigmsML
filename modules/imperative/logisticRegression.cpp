@@ -59,31 +59,31 @@ void train(int maxEpochs = 1000) {
 }
 
 
-int main() {
-    train(5000);
-    cout << "trained" << endl;
+// int main() {
+//     train(5000);
+//     cout << "trained" << endl;
 
-    cout << "\nfinal weights: ";
-    printWeights(weights);
-    cout << "final bias: " << bias << endl;
+//     cout << "\nfinal weights: ";
+//     printWeights(weights);
+//     cout << "final bias: " << bias << endl;
 
-    while (true) {
-        int vectorSize = 5;
-        vector<float> input(vectorSize, 0.0f);
+//     while (true) {
+//         int vectorSize = 5;
+//         vector<float> input(vectorSize, 0.0f);
 
-        cout << "Enter a vector" << endl;
-        for (int i = 0; i < vectorSize; i++) {
-            cin >> input[i];
-        }
+//         cout << "Enter a vector" << endl;
+//         for (int i = 0; i < vectorSize; i++) {
+//             cin >> input[i];
+//         }
         
-        float p = predict(input);
-        cout << "Probability (Sigmoide): " << p << endl;
-        cout << "Classification (Threshold 0.5): " << (p >= 0.5f ? 1 : 0) << endl;
+//         float p = predict(input);
+//         cout << "Probability (Sigmoide): " << p << endl;
+//         cout << "Classification (Threshold 0.5): " << (p >= 0.5f ? 1 : 0) << endl;
 
-        char opt = 1;
-        cout << "Enter 0 to exit. Press enter to continue" << endl;
-        cin >> opt;
-        if (opt == '0') break;
-    }
+//         char opt = 1;
+//         cout << "Enter 0 to exit. Press enter to continue" << endl;
+//         cin >> opt;
+//         if (opt == '0') break;
+//     }
     
-}
+// }

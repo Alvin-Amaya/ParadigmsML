@@ -6,6 +6,7 @@
 #include <string>
 // #include "ml_contract.grpc.pb.h"
 #include "../../proto/ml_contract.grpc.pb.h"
+#include "logisticRegression.cpp"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -19,13 +20,13 @@ using namespace std;
 
 class PredictorImp final : public MLPredictor::Service {
     Status Predict(ServerContext* context, const PredictionRequest* request, PredictionResponse* response) override {
-        // Mock prediction logic
-        float mock_probability = 0.85;
-        response->set_probability(mock_probability);
+        vector<float> features(request->data().features().begin(), request->data().features().end());
+        float probability = predict(features);
+        response->set_probability(probability);
         response->set_confidence(0.95);
         response->set_status("SUCCESS");
 
-        cout << "Prediccion para el Paciente: " << request->data().id() << endl;
+        cout << "Prediction for data point: " << request->data().id() << endl;
         return Status::OK;
     }   
 };
@@ -38,11 +39,13 @@ void RunServer() {
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
     unique_ptr<Server> server(builder.BuildAndStart());
-    cout << "Servidor escuchando en " << server_address << endl;
+    cout << "Server listening on " << server_address << endl;
     server->Wait();
 }
 
 int main(int argc, char** argv) {
+    cout << "Training Logistic Regression Model..." << endl;
+    train();
     RunServer();
     return 0;
 }
