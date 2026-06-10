@@ -19,6 +19,19 @@ message PredictionResponse {
     string status = 4;
 }
 
+message TrainRequest {
+    repeated DataPoint batch = 1;
+    repeated int32 labels = 2;
+    float learning_rate = 3;
+    int32 epoch = 4;
+}
+
+message TrainResponse {
+    string status = 1;
+    float final_loss = 2;
+}
+
 service MLPredictor {
     rpc Predict (PredictionRequest) returns (PredictionResponse);
+    rpc Train (TrainRequest) returns (TrainResponse);
 }
