@@ -21,12 +21,19 @@ using namespace std;
 class PredictorImp final : public MLPredictor::Service {
     Status Predict(ServerContext* context, const PredictionRequest* request, PredictionResponse* response) override {
         vector<float> features(request->data().features().begin(), request->data().features().end());
-        float probability = predict(features);
+        float probability = 0.0f;
+        try {
+            probability = predict(features);
+        } catch (const exception& e) {
+            cerr << "Error occurred: " << e.what() << endl;
+            return Status(grpc::StatusCode::INTERNAL, "Internal error");
+        }
         response->set_probability(probability);
         response->set_confidence(0.95);
         response->set_status("SUCCESS");
 
         cout << "Prediction for data point: " << request->data().id() << endl;
+        cout << "Probability: " << probability << endl;
         return Status::OK;
     }   
 };
@@ -44,8 +51,8 @@ void RunServer() {
 }
 
 int main(int argc, char** argv) {
-    cout << "Training Logistic Regression Model..." << endl;
-    train();
+    cout << "Loading Logistic Regression Model..." << endl;
+    // loadModel("logistic_model.txt");
     RunServer();
     return 0;
 }

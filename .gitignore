@@ -2,3 +2,7 @@
 /.venv
 /build
 /modules/imperative/build
+
+notes.md
+
+*.exe
