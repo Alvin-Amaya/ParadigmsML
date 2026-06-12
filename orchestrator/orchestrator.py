@@ -10,8 +10,10 @@ app = FastAPI()
 
 MODULE_PORTS = {
     "imperative": "localhost:50051",
-    "functional": "localhost:50052",
-    "object-oriented": "localhost:50053"
+    "structured": "localhost:50052",
+    "object-oriented": "localhost:50053",
+    "functional": "localhost:50054",
+    "logical": "localhost:50055"
 }
 
 NORMALIZATION_PARAMS = {}
@@ -48,11 +50,7 @@ def normalize(data, paradigm=None):
                 normalized.append(x)
         return normalized
     else:
-        min_val = min(data)
-        max_val = max(data)
-        if max_val - min_val == 0:
-            return [0.0 for _ in data]
-        return [(x - min_val) / (max_val - min_val) for x in data]
+        return data
 
 @app.get("/")
 async def root():

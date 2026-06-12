@@ -1,7 +1,7 @@
-/.vscode
 /.venv
-/build
-/modules/imperative/build
+**/build/*
+**/.vscode/
+**/__pycache__/
 
 notes.md
 
