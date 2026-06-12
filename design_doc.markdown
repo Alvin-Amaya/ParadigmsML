@@ -10,6 +10,26 @@ El sistema sigue un modelo de **Micro-servicios de Computación**
 
 - **Protocolo de Comunicación** gRPC para la comunicación eficiente entre distintos lenguajes de programación.
 
+### 1.1 Estructura de carpetas
+```
+/ml-paradigms-project
+├── /orchestrator
+├── /ui
+├── /modules
+│   ├── /imperative
+|   |   ├── main.cpp
+|   |   ├── logisticRegression.cpp
+|   |   └── logistic_model.txt
+│   ├── /structured
+│   ├── /POO
+│   ├── /functional
+│   ├── /logic
+├── /data
+├── /proto
+└── /test
+
+```
+
 ## 2. Componentes, Algoritmos y Stack
 
 | Paradigma | Algoritmo | Stack |
@@ -34,3 +54,9 @@ Aqui $x_i$ representa una característica y $w_i$ un peso. Nuestro objetivo es e
 Para el entrenamiento usamos
 $$ w_i' = w_i + \alpha(\delta-y)x_i $$
 El nuevo valor de $w_i$ es el valor anterior mas la diferencia de la salida desada $\delta$ y el valor obtenido $y$ (el error) multiplicado al valor de la característica $x_i$.
+
+#### 2.1.1 Implementación
+Nuestro modelo se aloja en `/modules/imperative`. El modelo fue entrenado con el dataset [heart disease](https://www.kaggle.com/datasets/mexwell/heart-disease-dataset) para predecir la probabilidad de un ataque al corazon basado en 11 caracteristicas.
+
+En esta carpeta encontramos los archivos `main.cpp` donde encuentra el servidor gRPC, llama al modelo desde aqui.
+En `logisticRegression` encontramos nuestro modelo, el cial guarda sus valores en `logistic_model.txt`.

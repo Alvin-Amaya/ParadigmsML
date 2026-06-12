@@ -4,7 +4,6 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server.h>
 #include <string>
-// #include "ml_contract.grpc.pb.h"
 #include "../../proto/ml_contract.grpc.pb.h"
 #include "logisticRegression.cpp"
 
