@@ -24,7 +24,17 @@ float sigmoid(float z) {
 }
 
 float predict(const vector<float>& features) {
-    float linearCombination = inner_product(features.begin(), features.end(), weights.begin(), 0.0f) + bias;
+    vector<float> normalized = features;
+    for (size_t i = 0; i < features.size(); ++i) {
+        if (i < minValues.size() && i < maxValues.size()) {
+            if (maxValues[i] > minValues[i]) {
+                normalized[i] = (features[i] - minValues[i]) / 
+                               (maxValues[i] - minValues[i]);
+            }
+        }
+    }
+    float linearCombination = inner_product(normalized.begin(), normalized.end(), 
+                                           weights.begin(), 0.0f) + bias;
     return sigmoid(linearCombination);
 }
 
