@@ -25,6 +25,13 @@ El sistema sigue un modelo de **Micro-servicios de Computación**
 |   |   ├── knn.c
 |   |   └── knn.h
 │   ├── /POO
+|   |   ├── activations.ts
+|   |   ├── brain.ts
+|   |   ├── index.ts
+|   |   ├── train.ts
+|   |   ├── loss.ts
+|   |   ├── vector.ts
+|   |   └── model.json
 │   ├── /functional
 │   └── /logic
 ├── /data
@@ -66,7 +73,7 @@ $$ w_i' = w_i + \alpha(\delta-y)x_i $$
 El nuevo valor de $w_i$ es el valor anterior mas la diferencia de la salida desada $\delta$ y el valor obtenido $y$ (el error) multiplicado al valor de la característica $x_i$.
 
 #### 2.1.1 Implementación
-Nuestro modelo se aloja en `/modules/imperative`. El modelo fue entrenado con el dataset [heart disease](https://www.kaggle.com/datasets/mexwell/heart-disease-dataset) para predecir la probabilidad de un ataque al corazon basado en 11 caracteristicas.
+Nuestro modelo se aloja en `/modules/imperative`. El modelo fue entrenado con el dataset [heart disease](https://www.kaggle.com/datasets/mexwell/heart-disease-dataset) para predecir la probabilidad de un ataque al corazon basado en 11 caracteristicas. Logramos cerca de un 70% de precision.
 
 En esta carpeta encontramos los archivos `main.cpp` donde encuentra el servidor gRPC, llama al modelo desde aqui.
 En `logisticRegression.cpp` encontramos nuestro modelo, el cial guarda sus valores en `logistic_model.txt`.
@@ -75,3 +82,6 @@ En `logisticRegression.cpp` encontramos nuestro modelo, el cial guarda sus valor
 El algoritmo k-vecinos más cercanos (KNN) es un modelo de aprendizaje automático supervisado, no paramétrico y basado en instancias. Se utiliza tanto para problemas de clasificación (predecir una categoría) como de regresión (predecir un valor numérico). Nosotros usamos clasificacion para catalogar si una persona es diabetica o no segun datos del dataset [Pima Indians Diabetes](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database).
 
 Aqui encontramos tambien un archivo `main.cpp` para el servidor y la comunicacion con el orquestador. Sin embargo, el modelo esta en `knn.c`.
+
+### 2.3 Perceptrón Multicapa
+Un perceptrón multicapa (MLP) es una red neuronal artificial compuesta por múltiples capas de neuronas (capa de entrada, una o más capas ocultas y una capa de salida). Su estructura interconectada le permite resolver problemas complejos que no son linealmente separables, superando las limitaciones de los perceptores simples. Es una version mas potente que nuestro algoritmo de regresion logistica. Con MLP alcanzamos una precision de 98.84%. La red fue entrenada con [Breast Cancer Wisconsin](https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data) para el diagnostico de cancer de mama.

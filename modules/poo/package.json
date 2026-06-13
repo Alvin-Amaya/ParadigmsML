@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.4",
-    "@grpc/proto-loader": "^0.8.1"
+    "@grpc/proto-loader": "^0.8.1",
+    "csv-parser": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3"
   }
 }

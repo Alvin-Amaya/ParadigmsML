@@ -2,6 +2,11 @@ import { type ActivationFunction } from './activations.ts';
 import { type LossFunction } from './loss.ts';
 import { Vector } from './vector.ts';
 
+interface NormalizationParams {
+    mins: number[];
+    maxs: number[];
+}
+
 export class Neuron {
     private weights: number[];
     private bias: number;
@@ -63,18 +68,32 @@ export class Layer {
 
 export class NeuralNetwork {
     private layers: Layer[] = [];
+    private normalizationParams: NormalizationParams | null = null;
     
     public addLayer(layer: Layer): void {
         this.layers.push(layer);
     }
 
     public predict(inputs: number[]): number[] {
-        return this.layers.reduce((acc, layer) => layer.forward(acc), inputs);
+        if (!this.normalizationParams) {
+            throw new Error("Normalized Params no loaded");
+        }
+        const normalizedInputs = inputs.map((val, i) => {
+            const min = this.normalizationParams!.mins[i];
+            const max = this.normalizationParams!.maxs[i];
+            const range = max - min;
+            return range === 0 ? 0 : (val - min) / range;
+        });
+
+        return this.layers.reduce((acc, layer) => layer.forward(acc), normalizedInputs);
+    }
+
+    public setNormalizationParams(mins: number[], maxs: number[]): void {
+        this.normalizationParams = {mins, maxs}
     }
 
     public train(trainingData: { inputs: number[]; outputs: number[] }[], learningRate: number, epochs: number, lossFunction: LossFunction): void {
         for (let epoch = 0; epoch < epochs; epoch++) {
-
             for (const data of trainingData) {
 
                 let predicted = data.inputs;
@@ -109,13 +128,15 @@ export class NeuralNetwork {
                     weights: neuron['weights'],
                     bias: neuron['bias']
                 }))
-            }))
+            })),
+            normalizationParams: this.normalizationParams
         };
         return JSON.stringify(model);
     }
 
     public loadModel(modelString: string, activation: ActivationFunction): void {
         const model = JSON.parse(modelString);
+        this.normalizationParams = model.normalizationParams;
         this.layers = model.layers.map((layerModel: any) => {
             const layer = new Layer(0, 0, activation);
             layer['neurons'] = layerModel.neurons.map((neuronModel: any) => {
