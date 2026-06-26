@@ -50,8 +50,8 @@ void RunServer() {
 }
 
 int main(int argc, char** argv) {
-    cout << "Loading Logistic Regression Model..." << endl;
-    // loadModel("logistic_model.txt");
+    cout << "Logistic Regression Model" << endl;
+    loadModel("./modules/imperative/logistic_model.txt");
     RunServer();
     return 0;
 }

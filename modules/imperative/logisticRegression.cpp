@@ -6,11 +6,12 @@
 #include <fstream>
 #include <algorithm>
 #include <limits>
+#include <sstream>
 
 using namespace std;   
 
-vector<float> weights = {1.2485f, 1.91249f, 2.66677f, 1.41679f, 0.413655f, 0.282295f, 0.576577f, -1.11458f, 1.22114f, 3.96008f, 3.34288f}; 
-float bias = -7.52895f;
+vector<float> weights;
+float bias = 0.0f;
 float learningRate = 0.1f;
 
 vector<vector<float>> trainingData;
@@ -180,9 +181,17 @@ void saveModel(const string& filename) {
 void loadModel(const string& filename) {
     ifstream inFile(filename);
     if (inFile.is_open()) {
-        for (auto& weight : weights) {
-            inFile >> weight;
+        weights.clear();
+        string line;
+        
+        if (getline(inFile, line)) {
+            stringstream ss(line);
+            float weight;
+            while (ss >> weight) {
+                weights.push_back(weight);
+            }
         }
+        
         inFile >> bias;
 
         size_t numFeatures = weights.size();
@@ -190,7 +199,6 @@ void loadModel(const string& filename) {
         maxValues.resize(numFeatures);
         for (size_t i = 0; i < numFeatures; ++i) inFile >> minValues[i];
         for (size_t i = 0; i < numFeatures; ++i) inFile >> maxValues[i];
-
 
         inFile.close();
     } else {
@@ -202,27 +210,27 @@ void loadModel(const string& filename) {
 // int main() {
 //     const string modelFilename = "logistic_model.txt";
 //     const string dataPath = "./../../data/heart_disease.csv";
+//     loadModel(modelFilename);
+//     // dataLoader(dataPath);
+//     // cout << "Loaded " << trainingData.size() << " samples with " << weights.size() << " features from " << dataPath << "." << endl;
 
-//     dataLoader(dataPath);
-//     cout << "Loaded " << trainingData.size() << " samples with " << weights.size() << " features from " << dataPath << "." << endl;
+//     // ifstream modelFile(modelFilename);
+//     // if (modelFile.good()) {
+//     //     modelFile.close();
+//     //     loadModel(modelFilename);
+//     //     cout << "Loaded existing model from " << modelFilename << "." << endl;
+//     //     evaluateModel(trainingData, labels);
+//     // } else {
+//     //     cout << "No trained model found. Training will start from initial weights." << endl;
+//     // }
 
-//     ifstream modelFile(modelFilename);
-//     if (modelFile.good()) {
-//         modelFile.close();
-//         loadModel(modelFilename);
-//         cout << "Loaded existing model from " << modelFilename << "." << endl;
-//         evaluateModel(trainingData, labels);
-//     } else {
-//         cout << "No trained model found. Training will start from initial weights." << endl;
-//     }
+//     // cout << "Starting training..." << endl;
+//     // train(20000);
+//     // cout << "Training finished." << endl;
 
-//     cout << "Starting training..." << endl;
-//     train(20000);
-//     cout << "Training finished." << endl;
-
-//     evaluateModel(trainingData, labels);
-//     saveModel(modelFilename);
-//     cout << "Model saved to " << modelFilename << "." << endl;
+//     // evaluateModel(trainingData, labels);
+//     // saveModel(modelFilename);
+//     // cout << "Model saved to " << modelFilename << "." << endl;
 
 //     size_t vectorSize = weights.size();
 

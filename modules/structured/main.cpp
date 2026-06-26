@@ -51,8 +51,8 @@ void RunServer() {
 }
 
 int main(int argc, char** argv) {
-    cout << "Loading KNN Model..." << endl;
-    loadDataset("../../data/diabetes.csv");
+    cout << "KNN Model..." << endl;
+    loadDataset("./data/diabetes.csv");
     RunServer();
     return 0;
 }

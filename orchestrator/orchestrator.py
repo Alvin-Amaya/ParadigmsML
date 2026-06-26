@@ -9,7 +9,7 @@ app = FastAPI()
 MODULE_PORTS = {
     "imperative": "localhost:50051",
     "structured": "localhost:50052",
-    "object-oriented": "localhost:50053",
+    "poo": "localhost:50053",
     "functional": "localhost:50054",
     "logical": "localhost:50055"
 }

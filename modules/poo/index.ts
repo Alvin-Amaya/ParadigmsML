@@ -26,5 +26,6 @@ const server = new grpc.Server();
 server.addService(mlContract.MLPredictor.service, { predict });
 server.bindAsync('0.0.0.0:50053', 
     grpc.ServerCredentials.createInsecure(), () => {
+        console.log('Neuronal Network Model')
         console.log('Server running in port 50053');
 });
