@@ -12,7 +12,7 @@ using namespace std;
 
 vector<float> weights;
 float bias = 0.0f;
-float learningRate = 0.1f;
+float learningRate = 0.01f; // Ajustado para evitar la explosión de weights
 
 vector<vector<float>> trainingData;
 vector<float> labels;
@@ -24,22 +24,26 @@ float sigmoid(float z) {
     return 1.0f / (1.0f + exp(-z));
 }
 
-float predict(const vector<float>& features) {
+float predict(const vector<float>& features, bool isAlreadyNormalized = false) {
     vector<float> normalized = features;
-    for (size_t i = 0; i < features.size(); ++i) {
-        if (i < minValues.size() && i < maxValues.size()) {
-            if (maxValues[i] > minValues[i]) {
-                normalized[i] = (features[i] - minValues[i]) / 
-                               (maxValues[i] - minValues[i]);
+    
+    if (!isAlreadyNormalized) {
+        for (size_t i = 0; i < features.size(); ++i) {
+            if (i < minValues.size() && i < maxValues.size()) {
+                if (maxValues[i] > minValues[i]) {
+                    normalized[i] = (features[i] - minValues[i]) / 
+                                   (maxValues[i] - minValues[i]);
+                }
             }
         }
     }
+
     float linearCombination = inner_product(normalized.begin(), normalized.end(), 
-                                           weights.begin(), 0.0f) + bias;
+                                            weights.begin(), 0.0f) + bias;
     return sigmoid(linearCombination);
 }
 
-void printWeights(const vector<float>& weights){
+void printWeights(const vector<float>& weights) {
     for (size_t i = 0; i < weights.size(); i++) {
         cout << weights[i] << " ";
     }
@@ -50,7 +54,8 @@ void train(int maxEpochs = 1000) {
     for (int epoch = 0; epoch < maxEpochs; epoch++) {
         float totalLoss = 0.0f;
         for (size_t i = 0; i < trainingData.size(); i++) {    
-            float predicted = predict(trainingData[i]);
+            // Pasamos 'true' para evitar re-normalizar trainingData
+            float predicted = predict(trainingData[i], true);
             float error = labels[i] - predicted;
             totalLoss += abs(error);
 
@@ -60,7 +65,7 @@ void train(int maxEpochs = 1000) {
             bias += learningRate * error;
         }
 
-        if (epoch % 100 == 0) {
+        if (epoch % 200 == 0) {
             cout << "Epoch: " << epoch << ", Weights: ";
             printWeights(weights);
             cout << "Total Loss: " << totalLoss << endl;
@@ -83,7 +88,7 @@ void evaluateModel(const vector<vector<float>>& data, const vector<float>& label
     size_t tp = 0, tn = 0, fp = 0, fn = 0;
 
     for (size_t i = 0; i < data.size(); ++i) {
-        float prediction = predict(data[i]);
+        float prediction = predict(data[i], true);
         int predLabel = prediction >= 0.5f ? 1 : 0;
         int trueLabel = static_cast<int>(labels[i]);
 
@@ -205,7 +210,6 @@ void loadModel(const string& filename) {
         cerr << "Unable to open file for loading model." << endl;
     }
 }
-
 
 // int main() {
 //     const string modelFilename = "logistic_model.txt";

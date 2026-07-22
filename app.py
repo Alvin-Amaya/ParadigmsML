@@ -27,6 +27,9 @@ tab1, tab2, tab3 = st.tabs([
 # ==========================================
 # 1. PESTAÑA: RIESGO CARDÍACO (C++ - Regresión Logística)
 # ==========================================
+# ==========================================
+# 1. PESTAÑA: RIESGO CARDÍACO (C++ - Regresión Logística)
+# ==========================================
 with tab1:
     st.header("Análisis de Probabilidad de Ataque Cardíaco")
     st.info("Procesado por el módulo **Imperativo (C++)** usando Regresión Logística sobre heart_disease.csv. Precisión: ~70%")
@@ -46,15 +49,27 @@ with tab1:
         btn_heart = st.form_submit_button("Evaluar Riesgo Cardíaco")
         
         if btn_heart:
-            # Aquí empaquetamos las características para enviarlas al orquestador
+            # Mapeo exacto de las 11 columnas segun heart_disease.csv:
+            # 1. age, 2. sex, 3. chest_pain_type, 4. resting_bp_s, 5. cholesterol, 
+            # 6. fasting_blood_sugar, 7. resting_ecg, 8. max_heart_rate, 
+            # 9. exercise_angina, 10. oldpeak, 11. ST_slope
+            features_11 = [
+                float(edad),                                   # 1. age
+                1.0,                                           # 2. sex (1 = Hombre / Neutro)
+                2.0,                                           # 3. chest pain type (2 = Neutro)
+                float(presion),                                # 4. resting bp s
+                float(colesterol),                             # 5. cholesterol
+                1.0 if azucar_ayunas == "Sí" else 0.0,         # 6. fasting blood sugar
+                0.0,                                           # 7. resting ecg (0 = Normal)
+                float(frecuencia_max),                         # 8. max heart rate
+                1.0 if angina == "Sí" else 0.0,                # 9. exercise angina
+                0.0,                                           # 10. oldpeak (0.0 = Normal)
+                1.0                                            # 11. ST slope (1 = Normal)
+            ]
+
             payload = {
-                "paradigm": "imperative",
-                "features": [
-                    float(edad), float(presion), float(colesterol),
-                    1.0 if azucar_ayunas == "Sí" else 0.0,
-                    float(frecuencia_max), 1.0 if angina == "Sí" else 0.0
-                    # Nota: Puedes extender este arreglo hasta completar las 11 características de tu modelo
-                ]
+                "algorithm": "imperative",
+                "features": features_11
             }
             
             with st.spinner("Enviando parámetros al Orquestador FastAPI..."):
@@ -62,7 +77,7 @@ with tab1:
                     response = requests.post(f"{FASTAPI_URL}/predict", json=payload)
                     if response.status_code == 200:
                         resultado = response.json()
-                        probabilidad = resultado.get("probability", 0.0) * 100
+                        probabilidad = resultado.get("prediction", 0.0) * 100
                         
                         if probabilidad > 50:
                             st.error(f"⚠️ Alto Riesgo Detectado. Probabilidad de afección cardíaca: {probabilidad:.2f}%")

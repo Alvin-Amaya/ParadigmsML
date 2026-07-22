@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package ml_paradigm;
+
+message DataPoint {
+    int32 id = 1;
+    repeated float features = 2;
+}
+
+message PredictionRequest {
+    string model_type = 1;
+    DataPoint data = 2;
+}
+
+message PredictionResponse {
+    float probability = 1;
+    float confidence = 2;
+    int64 processing_time_ns = 3;
+    string status = 4;
+}
+
+message TrainRequest {
+    repeated DataPoint batch = 1;
+    repeated int32 labels = 2;
+    float learning_rate = 3;
+    int32 epoch = 4;
+}
+
+message TrainResponse {
+    string status = 1;
+    float final_loss = 2;
+}
+
+service MLPredictor {
+    rpc Predict (PredictionRequest) returns (PredictionResponse);
+    rpc Train (TrainRequest) returns (TrainResponse);
+}

@@ -4,6 +4,7 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server.h>
 #include <string>
+#include <fstream>
 #include "../../proto/ml_contract.grpc.pb.h"
 #include "logisticRegression.cpp"
 
@@ -20,6 +21,12 @@ using namespace std;
 class PredictorImp final : public MLPredictor::Service {
     Status Predict(ServerContext* context, const PredictionRequest* request, PredictionResponse* response) override {
         vector<float> features(request->data().features().begin(), request->data().features().end());
+        
+        cout << "\n--- Peticion gRPC Recibida ---" << endl;
+        cout << "Features: ";
+        for (float f : features) cout << f << " | ";
+        cout << endl;
+
         float probability = 0.0f;
         try {
             probability = predict(features);
@@ -27,12 +34,12 @@ class PredictorImp final : public MLPredictor::Service {
             cerr << "Error occurred: " << e.what() << endl;
             return Status(grpc::StatusCode::INTERNAL, "Internal error");
         }
+
         response->set_probability(probability);
-        response->set_confidence(0.95);
+        response->set_confidence(0.70);
         response->set_status("SUCCESS");
 
-        cout << "Prediction for data point: " << request->data().id() << endl;
-        cout << "Probability: " << probability << endl;
+        cout << "Probabilidad devuelta: " << probability << endl;
         return Status::OK;
     }   
 };
@@ -51,7 +58,35 @@ void RunServer() {
 
 int main(int argc, char** argv) {
     cout << "Logistic Regression Model" << endl;
-    loadModel("./modules/imperative/logistic_model.txt");
+
+    // Probar las distintas rutas donde puede estar el CSV
+    string csvPath = "../heart_disease.csv"; 
+    ifstream checkCsv(csvPath);
+    
+    if (!checkCsv.good()) {
+        csvPath = "heart_disease.csv";
+        checkCsv.open(csvPath);
+    }
+    if (!checkCsv.good()) {
+        csvPath = "../../data/heart_disease.csv";
+        checkCsv.open(csvPath);
+    }
+
+    if (!checkCsv.good()) {
+        cerr << "ERROR: No se encontro heart_disease.csv en ninguna ruta relativa." << endl;
+        return 1;
+    }
+    checkCsv.close();
+
+    cout << "Cargando dataset desde: " << csvPath << endl;
+    dataLoader(csvPath);
+    
+    cout << "Iniciando entrenamiento del modelo..." << endl;
+    train(1000);
+
+    saveModel("../logistic_model.txt");
+    cout << "Modelo guardado exitosamente." << endl;
+
     RunServer();
     return 0;
 }

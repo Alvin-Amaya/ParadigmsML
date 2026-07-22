@@ -24,6 +24,7 @@ namespace ml_paradigm {
 
 static const char* MLPredictor_method_names[] = {
   "/ml_paradigm.MLPredictor/Predict",
+  "/ml_paradigm.MLPredictor/Train",
 };
 
 std::unique_ptr< MLPredictor::Stub> MLPredictor::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -34,6 +35,7 @@ std::unique_ptr< MLPredictor::Stub> MLPredictor::NewStub(const std::shared_ptr< 
 
 MLPredictor::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_Predict_(MLPredictor_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Train_(MLPredictor_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status MLPredictor::Stub::Predict(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest& request, ::ml_paradigm::PredictionResponse* response) {
@@ -59,6 +61,29 @@ void MLPredictor::Stub::async::Predict(::grpc::ClientContext* context, const ::m
   return result;
 }
 
+::grpc::Status MLPredictor::Stub::Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::ml_paradigm::TrainResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Train_, context, request, response);
+}
+
+void MLPredictor::Stub::async::Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Train_, context, request, response, std::move(f));
+}
+
+void MLPredictor::Stub::async::Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Train_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>* MLPredictor::Stub::PrepareAsyncTrainRaw(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::ml_paradigm::TrainResponse, ::ml_paradigm::TrainRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Train_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>* MLPredictor::Stub::AsyncTrainRaw(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncTrainRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 MLPredictor::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       MLPredictor_method_names[0],
@@ -70,12 +95,29 @@ MLPredictor::Service::Service() {
              ::ml_paradigm::PredictionResponse* resp) {
                return service->Predict(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      MLPredictor_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< MLPredictor::Service, ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](MLPredictor::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::ml_paradigm::TrainRequest* req,
+             ::ml_paradigm::TrainResponse* resp) {
+               return service->Train(ctx, req, resp);
+             }, this)));
 }
 
 MLPredictor::Service::~Service() {
 }
 
 ::grpc::Status MLPredictor::Service::Predict(::grpc::ServerContext* context, const ::ml_paradigm::PredictionRequest* request, ::ml_paradigm::PredictionResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status MLPredictor::Service::Train(::grpc::ServerContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response) {
   (void) context;
   (void) request;
   (void) response;

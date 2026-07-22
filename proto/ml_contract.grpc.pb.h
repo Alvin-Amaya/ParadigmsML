@@ -43,11 +43,20 @@ class MLPredictor final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::PredictionResponse>> PrepareAsyncPredict(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::PredictionResponse>>(PrepareAsyncPredictRaw(context, request, cq));
     }
+    virtual ::grpc::Status Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::ml_paradigm::TrainResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::TrainResponse>> AsyncTrain(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::TrainResponse>>(AsyncTrainRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::TrainResponse>> PrepareAsyncTrain(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::TrainResponse>>(PrepareAsyncTrainRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
       virtual void Predict(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest* request, ::ml_paradigm::PredictionResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Predict(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest* request, ::ml_paradigm::PredictionResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -55,6 +64,8 @@ class MLPredictor final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::PredictionResponse>* AsyncPredictRaw(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::PredictionResponse>* PrepareAsyncPredictRaw(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::TrainResponse>* AsyncTrainRaw(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::ml_paradigm::TrainResponse>* PrepareAsyncTrainRaw(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -66,11 +77,20 @@ class MLPredictor final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::ml_paradigm::PredictionResponse>> PrepareAsyncPredict(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::ml_paradigm::PredictionResponse>>(PrepareAsyncPredictRaw(context, request, cq));
     }
+    ::grpc::Status Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::ml_paradigm::TrainResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>> AsyncTrain(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>>(AsyncTrainRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>> PrepareAsyncTrain(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>>(PrepareAsyncTrainRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
       void Predict(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest* request, ::ml_paradigm::PredictionResponse* response, std::function<void(::grpc::Status)>) override;
       void Predict(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest* request, ::ml_paradigm::PredictionResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response, std::function<void(::grpc::Status)>) override;
+      void Train(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -84,7 +104,10 @@ class MLPredictor final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::ml_paradigm::PredictionResponse>* AsyncPredictRaw(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::ml_paradigm::PredictionResponse>* PrepareAsyncPredictRaw(::grpc::ClientContext* context, const ::ml_paradigm::PredictionRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>* AsyncTrainRaw(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::ml_paradigm::TrainResponse>* PrepareAsyncTrainRaw(::grpc::ClientContext* context, const ::ml_paradigm::TrainRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_Predict_;
+    const ::grpc::internal::RpcMethod rpcmethod_Train_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -93,6 +116,7 @@ class MLPredictor final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status Predict(::grpc::ServerContext* context, const ::ml_paradigm::PredictionRequest* request, ::ml_paradigm::PredictionResponse* response);
+    virtual ::grpc::Status Train(::grpc::ServerContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_Predict : public BaseClass {
@@ -114,7 +138,27 @@ class MLPredictor final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_Predict<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_Train : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Train() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_Train() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Train(::grpc::ServerContext* /*context*/, const ::ml_paradigm::TrainRequest* /*request*/, ::ml_paradigm::TrainResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTrain(::grpc::ServerContext* context, ::ml_paradigm::TrainRequest* request, ::grpc::ServerAsyncResponseWriter< ::ml_paradigm::TrainResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_Predict<WithAsyncMethod_Train<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_Predict : public BaseClass {
    private:
@@ -142,7 +186,34 @@ class MLPredictor final {
     virtual ::grpc::ServerUnaryReactor* Predict(
       ::grpc::CallbackServerContext* /*context*/, const ::ml_paradigm::PredictionRequest* /*request*/, ::ml_paradigm::PredictionResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_Predict<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_Train : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Train() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::ml_paradigm::TrainRequest* request, ::ml_paradigm::TrainResponse* response) { return this->Train(context, request, response); }));}
+    void SetMessageAllocatorFor_Train(
+        ::grpc::MessageAllocator< ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Train() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Train(::grpc::ServerContext* /*context*/, const ::ml_paradigm::TrainRequest* /*request*/, ::ml_paradigm::TrainResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Train(
+      ::grpc::CallbackServerContext* /*context*/, const ::ml_paradigm::TrainRequest* /*request*/, ::ml_paradigm::TrainResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_Predict<WithCallbackMethod_Train<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_Predict : public BaseClass {
@@ -157,6 +228,23 @@ class MLPredictor final {
     }
     // disable synchronous version of this method
     ::grpc::Status Predict(::grpc::ServerContext* /*context*/, const ::ml_paradigm::PredictionRequest* /*request*/, ::ml_paradigm::PredictionResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Train : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Train() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_Train() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Train(::grpc::ServerContext* /*context*/, const ::ml_paradigm::TrainRequest* /*request*/, ::ml_paradigm::TrainResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -182,6 +270,26 @@ class MLPredictor final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_Train : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Train() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_Train() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Train(::grpc::ServerContext* /*context*/, const ::ml_paradigm::TrainRequest* /*request*/, ::ml_paradigm::TrainResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestTrain(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_Predict : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -201,6 +309,28 @@ class MLPredictor final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* Predict(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Train : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Train() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Train(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Train() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Train(::grpc::ServerContext* /*context*/, const ::ml_paradigm::TrainRequest* /*request*/, ::ml_paradigm::TrainResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Train(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -230,9 +360,36 @@ class MLPredictor final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedPredict(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::ml_paradigm::PredictionRequest,::ml_paradigm::PredictionResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_Predict<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Train : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Train() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::ml_paradigm::TrainRequest, ::ml_paradigm::TrainResponse>* streamer) {
+                       return this->StreamedTrain(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Train() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Train(::grpc::ServerContext* /*context*/, const ::ml_paradigm::TrainRequest* /*request*/, ::ml_paradigm::TrainResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedTrain(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::ml_paradigm::TrainRequest,::ml_paradigm::TrainResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_Predict<WithStreamedUnaryMethod_Train<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_Predict<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_Predict<WithStreamedUnaryMethod_Train<Service > > StreamedService;
 };
 
 }  // namespace ml_paradigm

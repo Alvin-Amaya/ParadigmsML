@@ -15,6 +15,7 @@
     "csv-parser": "^3.2.1"
   },
   "devDependencies": {
-    "@types/node": "^25.9.3"
+    "@types/node": "^25.9.3",
+    "tsx": "^4.23.1"
   }
 }
